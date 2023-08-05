@@ -5,38 +5,44 @@ from tqdm import tqdm
 
 from data_structure import Processed_Search_Engine_Index, Raw_Search_Engine_Index
 
-MAX_ITERATIONS = 100
+MAX_INDEXES = 100
 
 
 session = HTMLSession()
 url_stack = ["https://www.wikipedia.org"]
 raw_search_engine_index = Raw_Search_Engine_Index()
 visited_urls = set()
+num_indexes = 0
 
 
 def main():
-    for _ in tqdm(range(MAX_ITERATIONS)):
-        if len(url_stack) == 0:
-            break
+    with tqdm(total=MAX_INDEXES) as pbar:
+        global num_indexes
+        while num_indexes < MAX_INDEXES:
+            if len(url_stack) == 0:
+                break
 
-        url = url_stack.pop()
-        if url in visited_urls:
-            continue
-        visited_urls.add(url)
-        try:
-            response = session.get(url)
-            if response.status_code != 200:
+            url = url_stack.pop()
+            if url in visited_urls:
                 continue
+            visited_urls.add(url)
+            try:
+                response = session.get(url)
+                if response.status_code != 200:
+                    continue
 
-            html = response.html
-            html.render()
-            raw_search_engine_index.add_website(html)
-            for link in html.absolute_links:
-                url_stack.append(link)
+                html = response.html
+                html.render()
+                raw_search_engine_index.add_website(html)
+                num_indexes += 1
+                pbar.update(1)
 
-        except Exception:
-            # We print new line because tqdm doesn't print new line after printing progress bar
-            print(f"\nFailed URL {url}")
+                for link in html.absolute_links:
+                    url_stack.append(link)
+
+            except Exception:
+                # We print new line because tqdm doesn't print new line after printing progress bar
+                print(f"\nFailed URL {url}")
 
     processed_search_engine_index = Processed_Search_Engine_Index(
         raw_search_engine_index
