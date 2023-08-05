@@ -15,7 +15,8 @@ with open(processed_search_engine_index_filepath, "rb") as f:
 print(f"Number of websites indexed: {len(processed_search_engine_index.urls)}")
 print(f"Top 10 results for keyword '{keyword}':")
 for i in range(10):
-    if processed_search_engine_index.keyword_index[keyword].empty():
+    results = processed_search_engine_index.keyword_index[keyword]
+    if results.empty():
         break
-    url_index = processed_search_engine_index.keyword_index[keyword].get().url_index
+    url_index = results.get().url_index
     print(processed_search_engine_index.urls[url_index])
