@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from collections import defaultdict
+from typing import List, DefaultDict
 
 from heapq import heappush, heappop
 
@@ -25,9 +26,9 @@ class Priority_Queue:
 
 @dataclass
 class Raw_Search_Engine_Index:
-    urls: list[str] = field(default_factory=list)
+    urls: List[str] = field(default_factory=list)
     # Maps keyword to a map of url_index to number of times the keyword appears in the website at url
-    keyword_index: defaultdict[str, defaultdict[int, int]] = field(
+    keyword_index: DefaultDict[str, DefaultDict[int, int]] = field(
         default_factory=lambda: defaultdict(lambda: defaultdict(lambda: 0))
     )
 
