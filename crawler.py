@@ -1,4 +1,5 @@
 import pickle
+from time import perf_counter
 
 from requests_html import HTMLSession
 from tqdm import tqdm
@@ -15,7 +16,7 @@ visited_urls = set()
 num_indexes = 0
 
 
-def main():
+def crawl():
     with tqdm(total=MAX_INDEXES) as pbar:
         global num_indexes
         while num_indexes < MAX_INDEXES:
@@ -44,9 +45,20 @@ def main():
                 # We print new line because tqdm doesn't print new line after printing progress bar
                 print(f"\nFailed URL {url}")
 
+
+def main():
+    t0 = perf_counter()
+    crawl()
+    t1 = perf_counter()
+    print(f"Crawled {num_indexes} websites in {t1 - t0} seconds")
+
+    t0 = perf_counter()
     processed_search_engine_index = Processed_Search_Engine_Index(
         raw_search_engine_index
     )
+    t1 = perf_counter()
+    print(f"Processed search engine index in {t1 - t0} seconds")
+
     with open("search_engine_index.pickle", "wb") as f:
         pickle.dump(processed_search_engine_index, f)
 
