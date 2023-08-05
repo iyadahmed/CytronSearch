@@ -1,5 +1,4 @@
 import pickle
-from traceback import print_exc
 
 from requests_html import HTMLSession
 from tqdm import tqdm
@@ -36,7 +35,8 @@ def main():
                 url_stack.append(link)
 
         except Exception:
-            print_exc()
+            # We print new line because tqdm doesn't print new line after printing progress bar
+            print(f"\nFailed URL {url}")
 
     processed_search_engine_index = Processed_Search_Engine_Index(
         raw_search_engine_index
