@@ -36,7 +36,7 @@ class WebSpider(Spider):
         super().__init__()
         self.raw_search_engine_index = Raw_Search_Engine_Index()
         self.max_parse_depth = 2
-        self.num_parsed_pages = 0
+        self.parse_depth = 0
 
     def start_requests(self):
         yield HtmlRequest(
@@ -51,9 +51,9 @@ class WebSpider(Spider):
 
         self.raw_search_engine_index.add_website(html)
 
-        if self.num_parsed_pages >= self.max_parse_depth:
+        if self.parse_depth >= self.max_parse_depth:
             raise CloseSpider("Reached parse limit")
-        self.num_parsed_pages += 1
+        self.parse_depth += 1
 
         for link in html.absolute_links:
             yield HtmlRequest(url=link, callback=self.parse, render=True)
