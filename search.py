@@ -5,7 +5,7 @@ from data_structure import Processed_Search_Engine_Index
 
 
 processed_search_engine_index_filepath = sys.argv[1]
-keyword = sys.argv[2]
+keyword = sys.argv[2].lower()
 
 
 with open(processed_search_engine_index_filepath, "rb") as f:

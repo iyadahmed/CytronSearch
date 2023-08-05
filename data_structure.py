@@ -37,7 +37,7 @@ class Raw_Search_Engine_Index:
         self.urls.append(html.url)
 
         for keyword in html.text.split():
-            self.keyword_index[keyword][url_index] += 1
+            self.keyword_index[keyword.lower()][url_index] += 1
 
 
 @dataclass(order=True)
