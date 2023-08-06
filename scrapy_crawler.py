@@ -11,7 +11,6 @@ import pickle
 from requests_html import HTMLResponse
 from scrapy import Spider
 from scrapy.http import Response
-from scrapy.signals import spider_closed
 from scrapy_requests import HtmlRequest
 
 from data_structure import Processed_Search_Engine_Index, Raw_Search_Engine_Index
@@ -68,12 +67,7 @@ class WebSpider(Spider):
         for link in html.absolute_links:
             yield HtmlRequest(url=link, callback=self.parse, render=True)
 
-    @classmethod
-    def from_crawler(cls, crawler, *args, **kwargs):
-        spider = super(WebSpider, cls).from_crawler(crawler, *args, **kwargs)
-        crawler.signals.connect(spider.closed, signal=spider_closed)
-        return spider
-
+    # Closed is already connected to the spider_closed signal
     def closed(self, reason):
         processed_search_engine_index = Processed_Search_Engine_Index(
             self.raw_search_engine_index
