@@ -1,7 +1,7 @@
 import pickle
 from time import perf_counter
 
-from requests_html import HTMLSession
+from requests_html import HTMLSession, HTML
 from tqdm import tqdm
 
 from data_structure import Processed_Search_Engine_Index, Raw_Search_Engine_Index
@@ -32,7 +32,7 @@ def crawl():
                 if response.status_code != 200:
                     continue
 
-                html = response.html
+                html: HTML = response.html
                 html.render()
                 raw_search_engine_index.add_website(html)
                 num_indexes += 1
