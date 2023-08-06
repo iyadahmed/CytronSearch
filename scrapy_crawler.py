@@ -43,6 +43,9 @@ class WebSpider(Spider):
             "scrapy.extensions.closespider.CloseSpider": 500,
         },
         "CLOSESPIDER_PAGECOUNT": MAX_PAGECOUNT,
+        "DEFAULT_SCRAPY_REQUESTS_SETTINGS": {
+            "browser_args": ["--no-sandbox"],
+        },
     }
 
     def __init__(self):
