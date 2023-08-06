@@ -1,10 +1,10 @@
+import asyncio
 import pickle
 from time import perf_counter
-import asyncio
 
-from requests_html import AsyncHTMLSession, HTML
-from tqdm.asyncio import tqdm
 import requests
+from requests_html import HTML, AsyncHTMLSession
+from tqdm.asyncio import tqdm
 
 from data_structure import Processed_Search_Engine_Index, Raw_Search_Engine_Index
 
