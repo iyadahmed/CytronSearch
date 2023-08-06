@@ -33,6 +33,12 @@ class Raw_Search_Engine_Index:
         default_factory=lambda: defaultdict(lambda: defaultdict(lambda: 0))
     )
 
+    def index(self, url: str, page_content: str):
+        url_index = len(self.urls)
+        self.urls.append(url)
+        for keyword in page_content.split():
+            self.keyword_index[keyword.lower()][url_index] += 1
+
     def add_website(self, html: HTML):
         # This assumes the html is already rendered (i.e. html.render() has been called)
         url_index = len(self.urls)
