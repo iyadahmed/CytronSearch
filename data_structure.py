@@ -5,7 +5,7 @@ from typing import List, DefaultDict
 from heapq import heappush, heappop
 
 from requests_html import HTML
-from bs4 import BeautifulSoup
+import lxml.html
 
 
 class Priority_Queue:
@@ -38,8 +38,8 @@ class Raw_Search_Engine_Index:
         url_index = len(self.urls)
         self.urls.append(html.url)
 
-        soup = BeautifulSoup(html.html, features="lxml")
-        clean_text = soup.get_text()
+        tree = lxml.html.fromstring(html.html)
+        clean_text = tree.text_content()
 
         for keyword in clean_text.split():
             self.keyword_index[keyword.lower()][url_index] += 1
