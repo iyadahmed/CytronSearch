@@ -3,6 +3,7 @@ import pickle
 from time import perf_counter
 
 import requests
+import requests_html
 from requests_html import HTML, AsyncHTMLSession
 from tqdm.asyncio import tqdm
 
@@ -27,7 +28,11 @@ async def crawl_async(progress_bar: tqdm, task_group: asyncio.TaskGroup, url: st
 
     html: HTML = response.html
     # TODO: render faster by using run_in_executor?
-    await html.arender()
+    try:
+        await html.arender()
+    except requests_html.MaxRetries:
+        print("Failed to render", url)
+        return
 
     for link in html.absolute_links:
         if len(visited_urls) >= MAX_VISITS:
