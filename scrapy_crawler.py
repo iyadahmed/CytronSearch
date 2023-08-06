@@ -10,33 +10,44 @@ import pickle
 
 from requests_html import HTMLResponse
 from scrapy import Spider
-from scrapy.exceptions import CloseSpider
 from scrapy.http import Response
 from scrapy.signals import spider_closed
 from scrapy_requests import HtmlRequest
 
 from data_structure import Processed_Search_Engine_Index, Raw_Search_Engine_Index
 
+MAX_PAGECOUNT = 100
+# Quoting Scrapy docs:
+# "When a certain closing condition is met,
+# requests which are currently in the downloader queue
+# (up to CONCURRENT_REQUESTS requests) are still processed."
+
 
 class WebSpider(Spider):
     name = "webspider"
 
     custom_settings = {
+        "SCHEDULER_PRIORITY_QUEUE": "scrapy.pqueues.DownloaderAwarePriorityQueue",
+        "CONCURRENT_REQUESTS": 100,
+        "REACTOR_THREADPOOL_MAXSIZE": 20,
         "LOG_LEVEL": "INFO",
         "COOKIES_ENABLED": False,
         "RETRY_ENABLED": False,
+        "DOWNLOAD_TIMEOUT": 15,
         "AJAXCRAWL_ENABLED": True,
         "TWISTED_REACTOR": "twisted.internet.asyncioreactor.AsyncioSelectorReactor",
         "DOWNLOADER_MIDDLEWARES": {
             "scrapy_requests.RequestsMiddleware": 800,
         },
+        "EXTENSIONS": {
+            "scrapy.extensions.closespider.CloseSpider": 500,
+        },
+        "CLOSESPIDER_PAGECOUNT": MAX_PAGECOUNT,
     }
 
     def __init__(self):
         super().__init__()
         self.raw_search_engine_index = Raw_Search_Engine_Index()
-        self.max_parse_depth = 2
-        self.parse_depth = 0
 
     def start_requests(self):
         yield HtmlRequest(
@@ -50,10 +61,6 @@ class WebSpider(Spider):
         html = page.html
 
         self.raw_search_engine_index.add_website(html)
-
-        if self.parse_depth >= self.max_parse_depth:
-            raise CloseSpider("Reached parse limit")
-        self.parse_depth += 1
 
         for link in html.absolute_links:
             yield HtmlRequest(url=link, callback=self.parse, render=True)
